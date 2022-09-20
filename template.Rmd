@@ -3,4 +3,18 @@ title: "Data Import"
 output: github_document
 ---
 
+```{r, echo=FALSE}
+library(readr)
+library(tidyverse)
+```
+
+
 # Data Import: CSVs
+
+Let's import data using the 'readr' package
+
+```{r}
+litters_df <- read_csv("data/FAS_litters.csv")
+litters_df <- janitor::clean_names(litters_df) #cleans up variable names
+```
+
