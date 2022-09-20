@@ -72,7 +72,7 @@ pulse_df
 ## Data export
 
 ```{r}
-write_csv(lotr_words, file="data/lotr_words_df.csv")
+write_csv(lotr_words, file="results/lotr_words_df.csv")
 ```
 
 ## Why not base R??
