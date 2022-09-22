@@ -119,4 +119,110 @@ filter(pups_data, sex==2 & pd_walk<11)
 
 ### `mutate`
 
+```{r}
+mutate(litters_data, 
+       wt_gain = gd18_weight - gd0_weight, 
+       group = str_to_lower(group), 
+       wt_gain_kg = wt_gain * 2.2
+)
+```
+
+A few things in this example are worth noting:
+
+* Your new variables can be functions of old variables
+* New variables appear at the end of the dataset in the order that they are created
+* You can overwrite old variables
+* You can create a new variable and immediately refer to (or change) it
+
+Learning Assessment
+```{r}
+mutate(pups_data, 
+       new_var = pd_pivot-7,
+       total_pd = pd_ears + pd_eyes + pd_pivot + pd_walk)
+```
+
+### `arrange` 
+
+```{r}
+head(arrange(litters_data, group, pups_born_alive), 10)
+```
+
+### `%>%`
+
+```{r}
+litters_data_raw = read_csv("./data/FAS_litters.csv",
+  col_types = "ccddiiii")
+litters_data_clean_names = janitor::clean_names(litters_data_raw)
+litters_data_selected_cols = select(litters_data_clean_names, -pups_survive)
+litters_data_with_vars = 
+  mutate(
+    litters_data_selected_cols, 
+    wt_gain = gd18_weight - gd0_weight,
+    group = str_to_lower(group))
+litters_data_with_vars_without_missing = 
+  drop_na(litters_data_with_vars, wt_gain)
+litters_data_with_vars_without_missing
+```
+
+Below, second option 
+
+```{r}
+litters_data_clean = 
+  drop_na(
+    mutate(
+      select(
+        janitor::clean_names(
+          read_csv("./data/FAS_litters.csv", col_types = "ccddiiii")
+          ), 
+      -pups_survive
+      ),
+    wt_gain = gd18_weight - gd0_weight,
+    group = str_to_lower(group)
+    ),
+  wt_gain
+  )
+
+litters_data_clean
+
+```
+
+These are both confusing and bad: the first gets confusing and clutters our workspace, and the second has to be read inside out.
+
+Piping solves this problem. It allows you to turn the nested approach into a sequential chain by passing the result of one function call as an argument to the next function call:
+
+```{r}
+litters_data = 
+  read_csv("./data/FAS_litters.csv", col_types = "ccddiiii") %>%
+  janitor::clean_names() %>%
+  select(-pups_survive) %>%
+  mutate(
+    wt_gain = gd18_weight - gd0_weight,
+    group = str_to_lower(group)) %>% 
+  drop_na(wt_gain)
+
+litters_data 
+```
+
+Steps: Reading the data, cleaning names, removing pups_survive column, creating new variable wt_gain and changing group to lowercase, dropping missing values of wt_gain. 
+
+### Shortcut for %>%: command + shift + m 
+
+
+Fitting a linear model
+
+```{r}
+litters_data %>%
+  lm(wt_gain ~ pups_born_alive, data = .) %>%
+  broom::tidy()
+```
+Learning Assessment 
+```{r}
+read_csv("./data/FAS_pups.csv", col_types = "ciiiii") %>% 
+janitor::clean_names() %>% 
+filter(sex==1) %>% 
+select(-pd_ears) %>%
+mutate(pd_greater_7 = pd_pivot > 7)
+    
+```
+
 
