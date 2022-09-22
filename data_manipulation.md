@@ -465,7 +465,8 @@ missing values of wt_gain.
 
 ### Shortcut for %\>%: command + shift + m
 
-Fitting a linear model
+Fitting a linear model (this is base R) but we can use pipe with it by
+writing “data = .” Using pipiing with non tidyverse code.
 
 ``` r
 litters_data %>%
