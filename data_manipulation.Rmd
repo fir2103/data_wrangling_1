@@ -53,3 +53,70 @@ If all you want to do is rename something, you can use rename instead of select.
 ```{r}
 rename(litters_data, GROUP = group, LiTtEr_NuMbEr = litter_number)
 ```
+
+There are some handy helper functions for select; read about all of them using ?select_helpers. I use starts_with(), ends_with(), and contains() often, especially when there variables are named with suffixes or other standard patterns:
+
+```{r}
+select(litters_data, starts_with("gd"))
+select(litters_data, ends_with("weight"))
+```
+
+I also frequently use is everything(), which is handy for reorganizing columns without discarding anything:
+
+```{r}
+select(litters_data, litter_number, pups_survive, everything())
+```
+
+`relocate` does a similar thing (and is sort of like rename in that it’s handy but not critical):
+
+```{r}
+relocate(litters_data, litter_number, pups_survive)
+```
+
+Lastly, like other functions in dplyr, select will export a dataframe even if you only select one column. Mostly this is fine, but sometimes you want the vector stored in the column. To pull a single variable, use `pull`.
+
+Learning Assessment
+```{r}
+select(pups_data, litter_number, sex, pd_ears)
+```
+
+
+### `filter`
+
+Filter rows according to specific conditions 
+
+Some ways you might filter the litters data are:
+
+* `gd_of_birth == 20`
+* `pups_born_alive >= 2`
+* `pups_survive != 4`
+* `!(pups_survive == 4)`
+* `group %in% c("Con7", "Con8")`
+* `group == "Con7" & gd_of_birth == 20`
+
+Example
+
+```{r}
+filter(litters_data, gd_of_birth==20)
+filter(litters_data, group %in% c("Con7", "Con8"))
+```
+
+
+Getting rid of missing values - use the tidyr package instead of filter
+
+```{r}
+drop_na(litters_data)
+drop_na(litters_data, pups_survive)
+```
+
+Don't create too many subsets of the data -> can clutter up the workspace
+
+Learning Assessment
+```{r}
+filter(pups_data, sex==1)
+filter(pups_data, sex==2 & pd_walk<11)
+```
+
+### `mutate`
+
+
